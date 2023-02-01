@@ -1,6 +1,7 @@
 import os
 import openai
 from dotenv import load_dotenv
+import pandas as pd
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -31,11 +32,15 @@ class Quiz:
         self.__rounds: int = 0
         self.__started: bool = False
     
-    def __str__(self) -> str:
-        information =f"**Players:** {', '.join(self.__players)}"
-        if self.__started:
-            information += f"\n**Rounds:** {str(self.__rounds)}"
-            information += f"\n**Started**"
+    def __str__(self) -> str: #Change
+        information =f"**Players:** {', '.join(self.players)}"
+        if self.started:
+            information += f"\n**Rounds:** {str(self.rounds)}"
+            if not self.ended:
+                information += f"\n**Started**"
+                information += f"\n**Question:** {str(len(self.__answered_questions)+1)}/{str(len(self.questions))}"
+            else:
+                information += f"\n**Ended**"
         
         return information
 
@@ -46,14 +51,17 @@ class Quiz:
             self.__players.add(player)
         return quantity != len(self.__players)
 
-    def init_match(self, rounds: int) -> bool:
+    def init_match(self, rounds: int) -> bool:# Change
         inited: bool = False
 
         if (not self.__started) and (len(self.__players) > 1) and (rounds >= 1):
             inited = True
             self.__rounds = rounds
-            for r in range(self.__rounds):
-                self.__questions += [Question(x, "**What kind of music do you enjoy the most?**\n**A.** Rock\n**B.** Electronic\n**C.** Sad music\n**D.** Rap") for x in self.__players]
+            questions_df = pd.read_csv("questions.csv")
+            for r in range(self.rounds):
+                for p in self.players:
+                    questions_row = questions_df.sample().squeeze().to_dict()
+                    self.__questions.append(Question(p,f'**{questions_row["QUESTION"]}**\nA.{questions_row["A"]}\nB.{questions_row["B"]}\nC.{questions_row["C"]}\nD.{questions_row["D"]}'))
             self.__started = True
         
         return inited
