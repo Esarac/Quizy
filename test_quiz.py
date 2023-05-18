@@ -108,10 +108,28 @@ def test_scores():
     quiz.register_player("Johan")
     quiz.register_player("Mateo")
 
+    assert quiz.question_index() == -1
+    assert quiz.question_relative_index() == -1
+    assert quiz.round_index() == -1
+
     quiz.init_match(2)
 
+    assert quiz.question_index() == 0
+    assert quiz.question_relative_index() == 0
+    assert quiz.round_index() == 0
+
     answer_factory(quiz)
+
+    assert quiz.question_index() == 1
+    assert quiz.question_relative_index() == 1
+    assert quiz.round_index() == 0
+
     answer_factory(quiz)
+
+    assert quiz.question_index() == 2
+    assert quiz.question_relative_index() == 2
+    assert quiz.round_index() == 0
+
     answer_factory(quiz)
 
     scores = quiz.scores()
@@ -119,11 +137,29 @@ def test_scores():
     assert scores["Johan"] == 2
     assert scores["Mateo"] == 0
 
+    assert quiz.question_index() == 3
+    assert quiz.question_relative_index() == 0
+    assert quiz.round_index() == 1
+
     answer_factory(quiz)
+
+    assert quiz.question_index() == 4
+    assert quiz.question_relative_index() == 1
+    assert quiz.round_index() == 1
+
     answer_factory(quiz)
+
+    assert quiz.question_index() == 5
+    assert quiz.question_relative_index() == 2
+    assert quiz.round_index() == 1
+
     answer_factory(quiz)
 
     scores = quiz.scores()
     assert scores["Esteban"] == 2
     assert scores["Johan"] == 4
     assert scores["Mateo"] == 0
+
+    assert quiz.question_index() == -1
+    assert quiz.question_relative_index() == -1
+    assert quiz.round_index() == -1

@@ -81,6 +81,18 @@ class Quiz:
             actual = self.__questions[0]
         return actual
     
+    def question_index(self) -> int:
+        index: int = len(self.__answered_questions)
+        return index if (self.started and not self.ended) else -1
+
+    def question_relative_index(self) -> int:
+        index: int = self.question_index() % len(self.players) if (self.started and not self.ended) else -1
+        return index
+    
+    def round_index(self) -> int:
+        index: int = int(self.question_index()/len(self.players)) if (self.started and not self.ended) else -1
+        return index
+    
     def scores(self) -> dict[str, int]:
         scores: dict[str, int] = {i:0 for i in self.players}
         for question in self.__answered_questions:
